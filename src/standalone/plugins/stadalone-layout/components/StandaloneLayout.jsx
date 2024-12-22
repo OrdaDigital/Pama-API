@@ -28,7 +28,7 @@ class StandaloneLayout extends React.Component {
         <BaseLayout />
         <Row>
           <Col>
-            <OnlineValidatorBadge />
+            {/* <OnlineValidatorBadge /> */}
           </Col>
         </Row>
       </Container>

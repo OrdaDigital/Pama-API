@@ -1,0 +1,427 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Pama API",
+    "description": "Documented API endpoints for Pama",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://pama-api-docs.ordatst.co.il/api"
+    }
+  ],
+  "components": {
+    "schemas": {
+      "generateDocumentApiResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "This is service response message"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "x-api-key"
+      },
+      "CustomAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "Authorization",
+        "description": "Authorization header with custom base64-encoded credentials"
+      }
+    }
+  },
+  "security": [
+    {
+      "ApiKeyAuth": []
+    },
+    {
+      "CustomAuth": []
+    }
+  ],
+  "paths": {
+    "/generateDocument": {
+      "post": {
+        "summary": "Create a new document",
+        "operationId": "createDocument",
+        "tags": ["Pama documents sign"],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/generateDocumentApiResponse"
+                },
+                "examples": {
+                  "application/json": {
+                    "value": {
+                      "status": true,
+                      "message": "Generated PDF base64"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/generateDocumentApiResponse"
+                },
+                "examples": {
+                  "application/json": {
+                    "value": {
+                      "status": false,
+                      "message": "No document found for documentId 0"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/generateDocumentApiResponse"
+                },
+                "examples": {
+                  "application/json": {
+                    "value": {
+                      "status": false,
+                      "message": "Authentication failed or illegal IP address"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "documentId": {
+                    "type": "integer"
+                  },
+                  "documentName": {
+                    "type": "string"
+                  },
+                  "representativeDetails": {
+                    "type": "object",
+                    "properties": {
+                      "representativeCode": { "type": "integer" },
+                      "representativeName": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "representativeId": { "type": "string" },
+                      "representativePhone": { "type": "string" },
+                      "requestIdentifier": { "type": "integer" },
+                      "requestPeriodInHours": { "type": "integer" }
+                    },
+                    "required": [
+                      "representativeCode",
+                      "representativeName",
+                      "representativeId",
+                      "representativePhone",
+                      "requestIdentifier",
+                      "requestPeriodInHours"
+                    ]
+                  },
+                  "documentData": {
+                    "type": "object",
+                    "properties": {
+                      "recipientDetails": {
+                        "type": "object",
+                        "properties": {
+                          "firstName": { "type": "string" },
+                          "lastName": { "type": "string" },
+                          "date": { "type": "string", "maxLength": 10 },
+                          "requestNumber": { "type": "integer" },
+                          "confirmationDate": {
+                            "type": "string",
+                            "maxLength": 10
+                          }
+                        },
+                        "required": [
+                          "firstName",
+                          "lastName",
+                          "date",
+                          "requestNumber",
+                          "confirmationDate"
+                        ]
+                      },
+                      "loanApplicantsDetails": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "applicantId": { "type": "integer" },
+                            "applicantFirstName": { "type": "string" },
+                            "applicantLastName": { "type": "string" },
+                            "applicantBirthDate": { "type": "string" }
+                          },
+                          "required": [
+                            "applicantId",
+                            "applicantFirstName",
+                            "applicantLastName",
+                            "applicantBirthDate"
+                          ]
+                        }
+                      },
+                      "loanPurpose": { "type": "string" },
+                      "mortagePropertiesDetails": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "propertyDescription": { "type": "string" },
+                            "propertyAddress": { "type": "string" },
+                            "propertyValue": { "type": "integer" }
+                          },
+                          "required": [
+                            "propertyDescription",
+                            "propertyAddress",
+                            "propertyValue"
+                          ]
+                        }
+                      },
+                      "loanComposition": {
+                        "type": "object",
+                        "properties": {
+                          "detailsValidationDate": {
+                            "type": "string",
+                            "maxLength": 10
+                          },
+                          "interestLane": { "type": "string" },
+                          "redemptionLane": { "type": "string" },
+                          "loanAmount": { "type": "integer" },
+                          "loanPeriodMonths": { "type": "integer" },
+                          "interestMechanism": { "type": "integer" },
+                          "nominalAnnualInterestRate": { "type": "integer" },
+                          "adjustedAnnualInterest": { "type": "integer" },
+                          "consumerPriceIndexLinkage": {
+                            "type": "string",
+                            "enum": ["כן", "לא"]
+                          },
+                          "firstMonthlyRepayment": { "type": "integer" },
+                          "totalCredit": { "type": "integer" }
+                        },
+                        "required": [
+                          "detailsValidationDate",
+                          "interestLane",
+                          "redemptionLane",
+                          "loanAmount",
+                          "loanPeriodMonths",
+                          "interestMechanism",
+                          "nominalAnnualInterestRate",
+                          "adjustedAnnualInterest",
+                          "consumerPriceIndexLinkage",
+                          "firstMonthlyRepayment",
+                          "totalCredit"
+                        ]
+                      },
+                      "collateral": {
+                        "type": "object",
+                        "properties": {
+                          "properties": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "propertyDescription": { "type": "string" },
+                                "maximumFundingPercentage": {
+                                  "type": "integer"
+                                },
+                                "propertyType": {
+                                  "type": "string",
+                                  "enum": ["נכס קיים", "נכס נרכש"]
+                                },
+                                "SelfSourcedPayoutPercentage": {
+                                  "type": "integer"
+                                }
+                              },
+                              "required": [
+                                "propertyDescription",
+                                "maximumFundingPercentage",
+                                "propertyType",
+                                "SelfSourcedPayoutPercentage"
+                              ]
+                            }
+                          }
+                        },
+                        "required": ["properties"]
+                      },
+                      "approvementValidityDate": { "type": "string" },
+                      "expensesPayment": { "type": "integer" },
+                      "appraiserEvaluation": {
+                        "type": "object",
+                        "properties": {
+                          "applicants": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "applicantFirstName": { "type": "string" },
+                                "applicantLastName": { "type": "string" },
+                                "applicantId": { "type": "integer" },
+                                "applicantPrimaryPhone": { "type": "string" },
+                                "applicantSecondaryPhone": { "type": "string" }
+                              },
+                              "required": [
+                                "applicantFirstName",
+                                "applicantLastName",
+                                "applicantId",
+                                "applicantPrimaryPhone"
+                              ]
+                            }
+                          },
+                          "propertyDetails": {
+                            "type": "object",
+                            "properties": {
+                              "propertyType": { "type": "string" },
+                              "city": { "type": "string" },
+                              "street": { "type": "string" },
+                              "houseNumber": { "type": "integer" },
+                              "entrance": { "type": "integer" },
+                              "floorNumber": { "type": "integer" },
+                              "apartmentNumber": { "type": "integer" },
+                              "blockNumber": { "type": "integer" },
+                              "parcelNumber": { "type": "integer" },
+                              "subParcelNumber": { "type": "integer" },
+                              "lotNumber": { "type": "integer" }
+                            },
+                            "required": ["city"]
+                          }
+                        },
+                        "required": ["applicants", "propertyDetails"]
+                      },
+                      "properties": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "propertyValue": { "type": "integer" },
+                            "extendedAppraisal": { "type": "string" },
+                            "standard19Appraisal": { "type": "string" }
+                          },
+                          "required": ["propertyValue"],
+                          "oneOf": [
+                            {
+                              "properties": {
+                                "extendedAppraisal": { "type": "string" }
+                              },
+                              "required": ["extendedAppraisal"]
+                            },
+                            {
+                              "properties": {
+                                "standard19Appraisal": { "type": "string" }
+                              },
+                              "required": ["standard19Appraisal"]
+                            }
+                          ]
+                        }
+                      },
+
+                      "appendixA": {
+                        "type": "object",
+                        "properties": {
+                          "date": { "type": "string", "maxLength": 10 }
+                        },
+                        "required": ["date"]
+                      }
+                    },
+                    "required": [
+                      "recipientDetails",
+                      "loanApplicantsDetails",
+                      "loanPurpose",
+                      "mortagePropertiesDetails",
+                      "loanComposition",
+                      "collateral",
+                      "approvementValidityDate",
+                      "expensesPayment",
+                      "appraiserEvaluation",
+                      "properties",
+                      "appendixA"
+                    ]
+                  },
+                  "signers": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "firstName": { "type": "string", "minLength": 2 },
+                        "lastName": { "type": "string", "minLength": 2 },
+                        "email": { "type": "string", "minLength": 5 },
+                        "phone": {
+                          "type": "string",
+                          "minLength": 10,
+                          "maxLength": 10
+                        },
+                        "role": { "type": "string" },
+                        "distributionChannel": {
+                          "type": "string",
+                          "enum": ["sms", "email"]
+                        },
+                        "order": { "type": "integer" }
+                      },
+                      "oneOf": [
+                        {
+                          "properties": {
+                            "email": { "type": "string", "minLength": 5 }
+                          },
+                          "required": ["email"]
+                        },
+                        {
+                          "properties": {
+                            "phone": {
+                              "type": "string",
+                              "minLength": 10,
+                              "maxLength": 10
+                            }
+                          },
+                          "required": ["phone"]
+                        }
+                      ],
+                      "required": [
+                        "firstName",
+                        "lastName",
+                        "role",
+                        "distributionChannel",
+                        "order"
+                      ]
+                    }
+                  }
+                },
+                "required": [
+                  "documentId",
+                  "documentName",
+                  "documentData",
+                  "representativeDetails",
+                  "signers"
+                ]
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
