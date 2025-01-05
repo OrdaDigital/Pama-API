@@ -206,35 +206,48 @@
                       "loanComposition": {
                         "type": "object",
                         "properties": {
+                          "loanTracks": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "interestLane": { "type": "string" },
+                                "redemptionLane": { "type": "string" },
+                                "loanAmount": { "type": "integer" },
+                                "loanPeriodMonths": { "type": "integer" },
+                                "interestMechanism": { "type": "integer" },
+                                "nominalAnnualInterestRate": {
+                                  "type": "integer"
+                                },
+                                "adjustedAnnualInterest": { "type": "integer" },
+                                "consumerPriceIndexLinkage": {
+                                  "type": "string",
+                                  "enum": ["כן", "לא"]
+                                },
+                                "firstMonthlyRepayment": { "type": "integer" }
+                              },
+                              "required": [
+                                "interestLane",
+                                "redemptionLane",
+                                "loanAmount",
+                                "loanPeriodMonths",
+                                "interestMechanism",
+                                "nominalAnnualInterestRate",
+                                "adjustedAnnualInterest",
+                                "consumerPriceIndexLinkage",
+                                "firstMonthlyRepayment"
+                              ]
+                            }
+                          },
                           "detailsValidationDate": {
                             "type": "string",
                             "maxLength": 10
                           },
-                          "interestLane": { "type": "string" },
-                          "redemptionLane": { "type": "string" },
-                          "loanAmount": { "type": "integer" },
-                          "loanPeriodMonths": { "type": "integer" },
-                          "interestMechanism": { "type": "integer" },
-                          "nominalAnnualInterestRate": { "type": "integer" },
-                          "adjustedAnnualInterest": { "type": "integer" },
-                          "consumerPriceIndexLinkage": {
-                            "type": "string",
-                            "enum": ["כן", "לא"]
-                          },
-                          "firstMonthlyRepayment": { "type": "integer" },
                           "totalCredit": { "type": "integer" }
                         },
                         "required": [
+                          "loanTracks",
                           "detailsValidationDate",
-                          "interestLane",
-                          "redemptionLane",
-                          "loanAmount",
-                          "loanPeriodMonths",
-                          "interestMechanism",
-                          "nominalAnnualInterestRate",
-                          "adjustedAnnualInterest",
-                          "consumerPriceIndexLinkage",
-                          "firstMonthlyRepayment",
                           "totalCredit"
                         ]
                       },
