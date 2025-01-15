@@ -213,18 +213,18 @@
                               "properties": {
                                 "interestLane": { "type": "string" },
                                 "redemptionLane": { "type": "string" },
-                                "loanAmount": { "type": "integer" },
+                                "loanAmount": { "type": "number" },
                                 "loanPeriodMonths": { "type": "integer" },
-                                "interestMechanism": { "type": "integer" },
+                                "interestMechanism": { "type": "string" },
                                 "nominalAnnualInterestRate": {
-                                  "type": "integer"
+                                  "type": "number"
                                 },
-                                "adjustedAnnualInterest": { "type": "integer" },
+                                "adjustedAnnualInterest": { "type": "number" },
                                 "consumerPriceIndexLinkage": {
                                   "type": "string",
                                   "enum": ["כן", "לא"]
                                 },
-                                "firstMonthlyRepayment": { "type": "integer" }
+                                "firstMonthlyRepayment": { "type": "number" }
                               },
                               "required": [
                                 "interestLane",
@@ -243,7 +243,7 @@
                             "type": "string",
                             "maxLength": 10
                           },
-                          "totalCredit": { "type": "integer" }
+                          "totalCredit": { "type": "number" }
                         },
                         "required": [
                           "loanTracks",
@@ -261,14 +261,14 @@
                               "properties": {
                                 "propertyDescription": { "type": "string" },
                                 "maximumFundingPercentage": {
-                                  "type": "integer"
+                                  "type": "number"
                                 },
                                 "propertyType": {
                                   "type": "string",
                                   "enum": ["נכס קיים", "נכס נרכש"]
                                 },
                                 "SelfSourcedPayoutPercentage": {
-                                  "type": "integer"
+                                  "type": "number"
                                 }
                               },
                               "required": [
@@ -283,7 +283,7 @@
                         "required": ["properties"]
                       },
                       "approvementValidityDate": { "type": "string" },
-                      "expensesPayment": { "type": "integer" },
+                      "expensesPayment": { "type": "number" },
                       "appraiserEvaluation": {
                         "type": "object",
                         "properties": {
@@ -313,13 +313,13 @@
                               "city": { "type": "string" },
                               "street": { "type": "string" },
                               "houseNumber": { "type": "integer" },
-                              "entrance": { "type": "integer" },
+                              "entrance": { "type": "string" },
                               "floorNumber": { "type": "integer" },
                               "apartmentNumber": { "type": "integer" },
                               "blockNumber": { "type": "integer" },
                               "parcelNumber": { "type": "integer" },
                               "subParcelNumber": { "type": "integer" },
-                              "lotNumber": { "type": "integer" }
+                              "lotNumber": { "type": "string" }
                             },
                             "required": ["city"]
                           }
