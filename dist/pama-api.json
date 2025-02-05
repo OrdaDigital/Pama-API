@@ -22,6 +22,32 @@
           "message": {
             "type": "string",
             "example": "This is service response message"
+          },
+          "document": {
+            "type": "object",
+            "properties": {
+              "documnentUuid": {
+                "type": "string",
+                "example": "961F9ECA-20B8-4E4B-8923-B36FFAE5A198"
+              },
+              "documentBase64": {
+                "type": "string",
+                "example": "JVBERi0xLjUKJeLjz9MNCjUgMCBvYmoKPDwK..."
+              }
+            }
+          }
+        }
+      },
+      "approveDocumentApiResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "This is service response message"
           }
         }
       }
@@ -66,7 +92,11 @@
                   "application/json": {
                     "value": {
                       "status": true,
-                      "message": "Generated PDF base64"
+                      "message": "Document created successfully",
+                      "document": {
+                        "documnentUuid": "uniqueidentifier",
+                        "documentBase64": "Generated PDF base64"
+                      }
                     }
                   }
                 }
@@ -84,7 +114,11 @@
                   "application/json": {
                     "value": {
                       "status": false,
-                      "message": "No document found for documentId 0"
+                      "message": "No document found for documentId 0",
+                      "document": {
+                        "documnentUuid": "",
+                        "documentBase64": ""
+                      }
                     }
                   }
                 }
@@ -102,7 +136,11 @@
                   "application/json": {
                     "value": {
                       "status": false,
-                      "message": "Authentication failed or illegal IP address"
+                      "message": "Authentication failed or illegal IP address",
+                      "document": {
+                        "documnentUuid": "",
+                        "documentBase64": ""
+                      }
                     }
                   }
                 }
@@ -389,10 +427,6 @@
                           "maxLength": 10
                         },
                         "role": { "type": "string" },
-                        "distributionChannel": {
-                          "type": "string",
-                          "enum": ["sms", "email"]
-                        },
                         "order": { "type": "integer" }
                       },
                       "oneOf": [
@@ -413,13 +447,7 @@
                           "required": ["phone"]
                         }
                       ],
-                      "required": [
-                        "firstName",
-                        "lastName",
-                        "role",
-                        "distributionChannel",
-                        "order"
-                      ]
+                      "required": ["firstName", "lastName", "role", "order"]
                     }
                   }
                 },
@@ -429,6 +457,159 @@
                   "documentData",
                   "representativeDetails",
                   "signers"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/approveDocument": {
+      "post": {
+        "summary": "Approve or Reject a document",
+        "operationId": "approveDocument",
+        "tags": ["Pama documents sign"],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/approveDocumentApiResponse"
+                },
+                "examples": {
+                  "application/json": {
+                    "value": {
+                      "status": true,
+                      "message": "Successfully approved the document: F3AD0BF8-862E-4EF7-9AB0-252317051A93"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/approveDocumentApiResponse"
+                },
+                "examples": {
+                  "application/json": {
+                    "value": {
+                      "status": false,
+                      "message": "Request Validation: Validation criteria not met. Validator 'Enum'. Stack[signaturesConfig.distributionChannel]",
+                      "document": {
+                        "documnentUuid": "",
+                        "documentBase64": ""
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/approveDocumentApiResponse"
+                },
+                "examples": {
+                  "application/json": {
+                    "value": {
+                      "status": false,
+                      "message": "Authentication failed or illegal IP address"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/approveDocumentApiResponse"
+                },
+                "examples": {
+                  "application/json": {
+                    "value": {
+                      "status": false,
+                      "message": "Document F3AD0BF8-862E-4EF7-9AB0-252317051A93 is already approved, rejected or expired."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/approveDocumentApiResponse"
+                },
+                "examples": {
+                  "application/json": {
+                    "value": {
+                      "status": false,
+                      "message": "Document F3AD0BF8-862E-4EF7-9AB0-252317051A93 not found."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "documentUuid": {
+                    "type": "string"
+                  },
+                  "documentApproved": {
+                    "type": "boolean"
+                  },
+                  "signaturesConfig": {
+                    "type": "object",
+                    "properties": {
+                      "distrubutionOrderType": {
+                        "type": "string",
+                        "enum": ["sequential", "parallel"]
+                      },
+                      "distributionChannel": {
+                        "type": "string",
+                        "enum": ["email", "sms"]
+                      },
+                      "processExpirationDate": { "type": "string" },
+                      "notificationsConfig": {
+                        "type": "object",
+                        "properties": {
+                          "notificationAmount": { "type": "number" },
+                          "notificationInterval": { "type": "number" }
+                        }
+                      }
+                    },
+                    "required": [
+                      "distrubutionOrderType",
+                      "distributionChannel",
+                      "processExpirationDate",
+                      "notificationsConfig"
+                    ]
+                  }
+                },
+                "required": [
+                  "documentUuid",
+                  "documentApproved",
+                  "signaturesConfig"
                 ]
               }
             }
